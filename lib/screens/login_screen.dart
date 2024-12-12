@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:personal_finance/blocs/auth/auth_bloc.dart';
@@ -33,5 +36,98 @@ class LoginScreen extends StatelessWidget {
             child: LoginForm(),
           ),
         ));
+  }
+}
+
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          EmailField(
+            controller: _emailController,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          PasswordField(
+            controller: _passwordController,
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          ElevatedButton(onPressed: () => {}, child: const Text('Iniciar Sesion'))
+        ],
+      ),
+    );
+  }
+}
+
+class EmailField extends StatelessWidget {
+  final TextEditingController controller;
+  const EmailField({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: const InputDecoration(labelText: 'Correo', prefixIcon: Icon(Icons.email)),
+      keyboardType: TextInputType.emailAddress,
+      validator: Validator.validateEmail,
+    );
+  }
+}
+
+class PasswordField extends StatelessWidget {
+  final TextEditingController controller;
+  const PasswordField({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: const InputDecoration(labelText: 'Contrasena', prefixIcon: Icon(Icons.lock)),
+      obscureText: true,
+      keyboardType: TextInputType.emailAddress,
+      validator: Validator.validatePassword,
+    );
+  }
+}
+
+class Validator {
+  static String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, ingrese el correo';
+    }
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+      return 'Por favor, ingres un correo valido';
+    }
+    return null;
+  }
+
+  static String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, ingrese su contrsena';
+    }
+    if (value.length < 6) {
+      return 'la contrasena tiene al menos 6 caracteres';
+    }
+    return null;
   }
 }
