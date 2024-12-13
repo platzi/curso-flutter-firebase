@@ -73,10 +73,36 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(
             height: 24,
           ),
-          ElevatedButton(onPressed: () => {}, child: const Text('Iniciar Sesion'))
+          ElevatedButton(onPressed: _signIn, child: const Text('Iniciar Sesion'))
         ],
       ),
     );
+  }
+
+  Future<void> _signIn() async {
+    if (_formKey.currentState?.validate() == true) {
+      try {
+        UserCredential userCredential =
+            await _auth.signInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Bienvenido, ${userCredential.user?.email}'),
+        ));
+        Future.delayed(const Duration(seconds: 2), () {
+          context.go('/dashboard');
+        });
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error ${e.message}'),
+        ));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
 

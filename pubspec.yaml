@@ -1,6 +1,6 @@
 name: personal_finance
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   bloc: ^8.1.4
-  cloud_firestore: ^5.5.1
   equatable: ^2.0.7
   firebase_auth: ^5.3.4
   firebase_core: ^3.8.1
