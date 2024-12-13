@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:personal_finance/blocs/auth/auth_bloc.dart';
+import 'package:personal_finance/blocs/auth/auth_event.dart';
 import 'package:personal_finance/widgets/profile_option.dart';
 import '../widgets/profile_card.dart';
 
@@ -26,19 +30,30 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Expanded(
               child: ListView(
-                children: const [
-                  ProfileOption(
+                children: [
+                  const ProfileOption(
                     icon: Icons.security,
                     title: 'Security Settings',
                   ),
-                  ProfileOption(
+                  const ProfileOption(
                     icon: Icons.notifications,
                     title: 'Notifications',
                   ),
-                  ProfileOption(
+                  const ProfileOption(
                     icon: Icons.help_outline,
                     title: 'Help & Support',
                   ),
+                  ProfileOption(
+                    icon: Icons.logout,
+                    title: 'Logout',
+                    onTap: () async {
+                      final confimed = await _showLogoutConfirmationDialog(context);
+                      if (confimed == true) {
+                        context.read<AuthBloc>().add(AuthLogouRequested());
+                        context.go('/login');
+                      }
+                    },
+                  )
                 ],
               ),
             ),
