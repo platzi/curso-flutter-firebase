@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_finance/widgets/budget_card.dart';
 
@@ -6,83 +7,76 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      backgroundColor: theme.appBarTheme.foregroundColor,
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.green,
-              Colors.white,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.3, 0.7],
-          ),
+    return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('Dashboard'),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Balance general
-              _buildCustomCard(
-                title: "Available balance",
-                amount: "\$3,578",
-                subtitle: "See details",
-                theme: theme,
-              ),
-              const SizedBox(height: 16),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 120,
+            ),
+            _buildBody(context),
+          ],
+        ));
+  }
 
-              // Presupuesto
-              _buildCustomCard(
-                title: "Budget for October",
-                amount: "\$2,478",
-                subtitle: "Cash Available",
-                theme: theme,
-              ),
-              const SizedBox(height: 16),
+  Widget _buildBody(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              colors: [CupertinoColors.systemGreen, CupertinoColors.white],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.3, 0.7])),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Balance general
+            _buildCustomCard(
+              title: "Available balance",
+              amount: "\$3,578",
+              subtitle: "See details",
+            ),
+            const SizedBox(height: 16),
 
-              // Botón de objetivo de ahorro
-              ElevatedButton(
-                onPressed: () {
-                  // Acción de crear objetivo de ahorro
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            // Presupuesto
+            _buildCustomCard(
+              title: "Budget for October",
+              amount: "\$2,478",
+              subtitle: "Cash Available",
+            ),
+            const SizedBox(height: 16),
+
+            // Botón de objetivo de ahorro
+            CupertinoButton.filled(
+              child: const Text('Create a Saving Goal'),
+              onPressed: () {},
+            ),
+
+            const SizedBox(height: 16),
+
+            // Ingreso y gastos
+            const Row(
+              children: [
+                Expanded(
+                  child: BudgetCard(
+                    title: "Income",
+                    amount: "\$1,800.00",
                   ),
                 ),
-                child: const Text('Create a Saving Goal'),
-              ),
-              const SizedBox(height: 16),
-
-              // Ingreso y gastos
-              const Row(
-                children: [
-                  Expanded(
-                    child: BudgetCard(
-                      title: "Income",
-                      amount: "\$1,800.00",
-                    ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: BudgetCard(
+                    title: "Expense",
+                    amount: "\$1,800.00",
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: BudgetCard(
-                      title: "Expense",
-                      amount: "\$1,800.00",
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -93,10 +87,9 @@ class DashboardScreen extends StatelessWidget {
     required String title,
     required String amount,
     String? subtitle,
-    required ThemeData theme,
   }) {
     return Card(
-      color: theme.appBarTheme.foregroundColor,
+      color: CupertinoColors.systemBackground,
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -108,9 +101,9 @@ class DashboardScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: theme.appBarTheme.foregroundColor,
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              color: CupertinoColors.systemBackground,
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -119,8 +112,8 @@ class DashboardScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 title,
-                style: TextStyle(
-                  color: theme.primaryColorDark,
+                style: const TextStyle(
+                  color: CupertinoColors.systemGreen,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -136,17 +129,13 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Text(
                   amount,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.primaryColorDark,
-                  ),
+                  selectionColor: CupertinoColors.systemGreen,
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     subtitle,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
+                    selectionColor: CupertinoColors.opaqueSeparator,
                   ),
                 ],
               ],
