@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:personal_finance/app_theme.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_event.dart';
+import 'package:personal_finance/models/income_expense_model.dart';
 
 class NavBar extends StatelessWidget {
   final int currentIndex;
@@ -95,11 +98,25 @@ class NavBar extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _addTransaction(
+                                  context,
+                                  amountController.text,
+                                  descriptionController.text,
+                                  'income',
+                                );
+                              },
                               child: const Text('Add Income'),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _addTransaction(
+                                  context,
+                                  amountController.text,
+                                  descriptionController.text,
+                                  'expense',
+                                );
+                              },
                               child: const Text('Add Expense'),
                             ),
                           ],
@@ -115,5 +132,26 @@ class NavBar extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _addTransaction(BuildContext context, String amount, String description, String type) {
+    final parsedAmount = double.tryParse(amount);
+
+    if (parsedAmount == null || parsedAmount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid amount')));
+      return;
+    }
+
+    final transaction = IncomeExpense(
+      amount: parsedAmount.toInt(),
+      description: description.isEmpty ? 'no description' : description,
+      date: DateTime.now(),
+      type: type,
+    );
+
+    context.read<IncomeExpenseBloc>().add(AddTransaction(transaction));
+
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transaction added successfully')));
   }
 }

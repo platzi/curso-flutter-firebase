@@ -31,7 +31,9 @@ class TransactionList extends StatelessWidget {
                 date: transaction.date.toLocal().toString(),
                 amount: '\$${transaction.amount.toStringAsFixed(2)}',
                 icon: transaction.type == 'income' ? Icons.add : Icons.remove,
-                onDelete: () {},
+                onDelete: () {
+                  context.read<IncomeExpenseBloc>().add(DeleteTransaction(transaction.id ?? ''));
+                },
               );
             },
           );
