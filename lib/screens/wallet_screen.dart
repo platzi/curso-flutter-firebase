@@ -65,8 +65,20 @@ class WalletScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
-            const Expanded(
-              child: TransactionList(),
+            Expanded(
+              child: BlocBuilder<IncomeExpenseBloc, IncomeExpenseState>(
+                builder: (context, state) {
+                  if (state is TransactionLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is TransactionLoaded) {
+                    return TransactionList(transactions: state.transactions);
+                  } else if (state is TransactionError) {
+                    return Center(child: Text(state.message));
+                  } else {
+                    return const Center(child: Text('No transactions found.'));
+                  }
+                },
+              ),
             ),
           ],
         ),
