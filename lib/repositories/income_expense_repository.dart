@@ -22,4 +22,17 @@ class IncomeExpenseRepository {
       throw Exception('Error fetching transaction: $e');
     }
   }
+
+  Future<void> addTransaction(IncomeExpense transaction) async {
+    try {
+      await _firestore.collection('transactions').add({
+        "amount": transaction.amount,
+        "description": transaction.description,
+        "date": transaction.date,
+        "type": transaction.type,
+      });
+    } catch (e) {
+      throw Exception('Error adding transactions: $e');
+    }
+  }
 }

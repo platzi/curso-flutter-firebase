@@ -16,5 +16,15 @@ class IncomeExpenseBloc extends Bloc<IncomeExpenseEvent, IncomeExpenseState> {
         emit(TransactionError('Error loading transacion: $e'));
       }
     });
+
+    on<AddTransaction>((event, emit) async {
+      try {
+        await repository.addTransaction(event.transaction);
+        final transactions = await repository.fetchTransactions();
+        emit(TransactionLoaded(transactions));
+      } catch (e) {
+        emit(TransactionError('Error adding transacion: $e'));
+      }
+    });
   }
 }
