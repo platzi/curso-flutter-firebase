@@ -60,4 +60,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'personal-finances-98969.firebasestorage.app',
     iosBundleId: 'com.aliappfinance.personalFinance',
   );
+
 }
