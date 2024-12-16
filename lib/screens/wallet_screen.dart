@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_state.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/transaction_list.dart';
 
@@ -20,10 +23,39 @@ class WalletScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Tarjeta de Balance
-            const BalanceCard(
-              title: 'Available Balance',
-              amount: '\$3,578',
-              subtitle: 'See details',
+            BlocBuilder<IncomeExpenseBloc, IncomeExpenseState>(
+              builder: (context, state) {
+                if (state is TransactionLoading) {
+                  return const BalanceCard(
+                    title: 'Available Balance',
+                    amount: '\$0',
+                    subtitle: 'See details',
+                  );
+                } else if (state is TransactionLoaded) {
+                  final balance = state.transactions.fold<double>(
+                      0,
+                      (sum, transaction) =>
+                          transaction.type == 'income' ? sum + transaction.amount : sum - transaction.amount);
+
+                  return BalanceCard(
+                    title: 'Available Balance',
+                    amount: '\$${balance.toString()}',
+                    subtitle: 'See details',
+                  );
+                } else if (state is TransactionError) {
+                  return const BalanceCard(
+                    title: 'Available Balance',
+                    amount: '\$0',
+                    subtitle: 'See details',
+                  );
+                } else {
+                  return const BalanceCard(
+                    title: 'Available Balance',
+                    amount: '\$0',
+                    subtitle: 'See details',
+                  );
+                }
+              },
             ),
             const SizedBox(height: 16),
 
