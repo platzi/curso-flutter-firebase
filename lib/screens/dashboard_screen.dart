@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_state.dart';
 import 'package:personal_finance/widgets/budget_card.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -12,17 +15,46 @@ class DashboardScreen extends StatelessWidget {
         navigationBar: const CupertinoNavigationBar(
           middle: Text('Dashboard'),
         ),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 120,
-            ),
-            _buildBody(context),
-          ],
+        child: BlocBuilder<IncomeExpenseBloc, IncomeExpenseState>(
+          builder: (context, state) {
+            if (state is TransactionLoading) {
+              return const Center(
+                child: CupertinoActivityIndicator(),
+              );
+            } else if (state is TransactionLoaded) {
+              final totalIncome = state.transactions
+                  .where((transaction) => transaction.type == 'income')
+                  .fold<double>(0, (sum, transaction) => sum + transaction.amount);
+
+              final totalExpense = state.transactions
+                  .where((transaction) => transaction.type == 'expense')
+                  .fold<double>(0, (sum, transaction) => sum + transaction.amount);
+
+              final availableBalance = totalIncome - totalExpense;
+              final budgetForMonth = totalIncome * 0.7;
+
+              return Column(
+                children: [
+                  const SizedBox(
+                    height: 120,
+                  ),
+                  _buildBody(context, availableBalance, budgetForMonth, totalIncome, totalExpense),
+                ],
+              );
+            } else if (state is TransactionError) {
+              return Center(
+                child: Text('Error loading data: ${state.message}'),
+              );
+            } else {
+              return const Center(
+                child: Text('No data available'),
+              );
+            }
+          },
         ));
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, double availableBalance, double budget, double income, double expense) {
     return Container(
       decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -38,7 +70,7 @@ class DashboardScreen extends StatelessWidget {
             // Balance general
             _buildCustomCard(
               title: "Available balance",
-              amount: "\$3,578",
+              amount: "\$${availableBalance.toString()}",
               subtitle: "See details",
             ),
             const SizedBox(height: 16),
@@ -46,7 +78,7 @@ class DashboardScreen extends StatelessWidget {
             // Presupuesto
             _buildCustomCard(
               title: "Budget for October",
-              amount: "\$2,478",
+              amount: "\$${budget.toString()}",
               subtitle: "Cash Available",
             ),
             const SizedBox(height: 16),
@@ -60,19 +92,19 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Ingreso y gastos
-            const Row(
+            Row(
               children: [
                 Expanded(
                   child: BudgetCard(
                     title: "Income",
-                    amount: "\$1,800.00",
+                    amount: "\$${income.toString()}",
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: BudgetCard(
                     title: "Expense",
-                    amount: "\$1,800.00",
+                    amount: "\$${expense.toString()}",
                   ),
                 ),
               ],
