@@ -8,6 +8,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+        backgroundColor: Colors.white,
         navigationBar: const CupertinoNavigationBar(
           middle: Text('Dashboard'),
         ),
