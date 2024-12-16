@@ -9,3 +9,9 @@ class AddTransaction extends IncomeExpenseEvent {
 
   AddTransaction(this.transaction);
 }
+
+class DeleteTransaction extends IncomeExpenseEvent {
+  final String id;
+
+  DeleteTransaction(this.id);
+}

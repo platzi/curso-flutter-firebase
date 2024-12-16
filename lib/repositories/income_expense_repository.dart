@@ -35,4 +35,8 @@ class IncomeExpenseRepository {
       throw Exception('Error adding transactions: $e');
     }
   }
+
+  Future<void> deleteTransaction(String docId) async {
+    await FirebaseFirestore.instance.collection('transactions').doc(docId).delete();
+  }
 }

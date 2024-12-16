@@ -26,5 +26,15 @@ class IncomeExpenseBloc extends Bloc<IncomeExpenseEvent, IncomeExpenseState> {
         emit(TransactionError('Error adding transacion: $e'));
       }
     });
+
+    on<DeleteTransaction>((event, emit) async {
+      try {
+        await repository.deleteTransaction(event.id);
+        final transactions = await repository.fetchTransactions();
+        emit(TransactionLoaded(transactions));
+      } catch (e) {
+        emit(TransactionError('Error deleting transacion: $e'));
+      }
+    });
   }
 }
