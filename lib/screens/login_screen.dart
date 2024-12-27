@@ -73,7 +73,7 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(
             height: 24,
           ),
-          ElevatedButton(onPressed: _signIn, child: const Text('Iniciar Sesion'))
+          ElevatedButton(onPressed: _signIn, child: const Text('Iniciar sesion'))
         ],
       ),
     );
